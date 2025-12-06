@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minigame Quay Thưởng</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div class="main-wrapper">
+      <div class="header-text">
+        <h3>KHÓI – Câu lạc bộ Múa NTH</h3>
+        <h1>Minigame</h1>
+      </div>
+
+      <div class="game-box" style="width: 850px; max-width: 95%">
+        <div
+          class="slot-machine"
+          style="justify-content: space-between; gap: 10px"
+        >
+          <div class="reel" style="width: 23%">
+            <div class="reel-strip" id="reel1"></div>
+          </div>
+          <div class="reel" style="width: 23%">
+            <div class="reel-strip" id="reel2"></div>
+          </div>
+          <div class="reel" style="width: 23%">
+            <div class="reel-strip" id="reel3"></div>
+          </div>
+          <div class="reel" style="width: 23%">
+            <div class="reel-strip" id="reel4"></div>
+          </div>
+        </div>
+
+        <div class="control-area">
+          <button class="spin-btn" onclick="spin()">QUAY</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-overlay" id="resultModal">
+      <div class="modal-content">
+        <h2 class="modal-title">Chúc mừng!</h2>
+        <div class="result-container" id="resultContainer"></div>
+        <button class="close-btn" onclick="closeModal()">Chơi tiếp</button>
+      </div>
+    </div>
+
+    <script>
+      // --- CẤU HÌNH ---
+      const iconHeight = 100;
+      const timePerSpin = 4000;
+      const reelHeight = 200;
+      const centerOffset = (reelHeight - iconHeight) / 2;
+
+      // 1. Danh sách trái cây (10 loại)
+      const fruitList = [
+        "https://cdn-icons-png.flaticon.com/512/415/415733.png", // 0: Táo
+        "https://cdn-icons-png.flaticon.com/512/135/135620.png", // 1: Cam
+        "https://cdn-icons-png.flaticon.com/512/1135/1135545.png", // 2: Nho
+        "https://cdn-icons-png.flaticon.com/512/2909/2909787.png", // 3: Dưa hấu
+        "https://cdn-icons-png.flaticon.com/512/1514/1514935.png", // 4: Chuối
+        "https://cdn-icons-png.flaticon.com/512/1135/1135579.png", // 5: Dâu
+        "https://cdn-icons-png.flaticon.com/512/2224/2224159.png", // 6: Cherry
+        "https://cdn-icons-png.flaticon.com/512/1412/1412511.png", // 7: Lê
+        "https://cdn-icons-png.flaticon.com/512/5726/5726583.png", // 8: Chanh
+        "https://cdn-icons-png.flaticon.com/512/765/765544.png", // 9: Đào
+      ];
+
+      // 2. Danh sách có ô trống (Index 0 là BLANK, Index 1-10 là trái cây)
+      const fruitListWithBlank = ["BLANK", ...fruitList];
+
+      // Cấu hình 4 cột
+      // Yêu cầu 1: currentIndex để là 1 (Táo) để lúc đầu không hiện ô trống
+      const reelsConfig = [
+        { id: "reel1", data: fruitListWithBlank, currentIndex: 1 },
+        { id: "reel2", data: fruitListWithBlank, currentIndex: 1 },
+        { id: "reel3", data: fruitListWithBlank, currentIndex: 1 },
+        { id: "reel4", data: fruitList, currentIndex: 0 },
+      ];
+
+      // --- HÀM TẠO GIAO DIỆN ---
+      const generateStripHTML = (data) => {
+        let html = "";
+        for (let i = 0; i < 60; i++) {
+          data.forEach((item) => {
+            if (item === "BLANK") {
+              html += `<div class="fruit-img" style="height: ${iconHeight}px;"></div>`;
+            } else {
+              html += `<img src="${item}" class="fruit-img">`;
+            }
+          });
+        }
+        return html;
+      };
+
+      reelsConfig.forEach((config) => {
+        const el = document.getElementById(config.id);
+        el.innerHTML = generateStripHTML(config.data);
+        const startY = -(config.currentIndex * iconHeight) + centerOffset;
+        el.style.transform = `translateY(${startY}px)`;
+      });
+
+      // --- HÀM QUAY (LOGIC MỚI: ĐỒNG BỘ TRÁI CÂY) ---
+      function spin() {
+        const btn = document.querySelector(".spin-btn");
+        btn.disabled = true;
+
+        // BƯỚC 1: Chọn ra "Trái cây chủ đạo" của lượt quay này (Random từ 0-9)
+        const targetFruitIndex = Math.floor(Math.random() * fruitList.length);
+
+        // Tính toán index tương ứng trong danh sách có ô trống
+        // Vì 'BLANK' ở vị trí 0, nên trái cây sẽ bị đẩy lên 1 bậc (index + 1)
+        const targetIndexInBlankList = targetFruitIndex + 1;
+
+        reelsConfig.forEach((config, i) => {
+          const el = document.getElementById(config.id);
+          const totalItems = config.data.length;
+
+          // BƯỚC 2: Quyết định kết quả cho từng cột
+          let nextIndex;
+
+          if (i === 3) {
+            // Cột 4 (Cuối cùng): Bắt buộc ra trái cây chủ đạo
+            nextIndex = targetFruitIndex;
+          } else {
+            // Cột 1, 2, 3: Random tỷ lệ xuất hiện
+            // 60% ra Trái cây chủ đạo, 40% ra Ô trống
+            const isFruit = Math.random() < 0.6;
+
+            if (isFruit) {
+              nextIndex = targetIndexInBlankList; // Ra trái cây (giống cột 4)
+            } else {
+              nextIndex = 0; // Ra ô trống (index 0 trong fruitListWithBlank)
+            }
+          }
+
+          // --- Xử lý hiệu ứng quay (Giữ nguyên) ---
+          const resetY = -(config.currentIndex * iconHeight) + centerOffset;
+          el.style.transition = "none";
+          el.style.transform = `translateY(${resetY}px)`;
+          void el.offsetWidth;
+
+          const loops = 40 + i * 5;
+          const targetY =
+            -(loops * totalItems * iconHeight + nextIndex * iconHeight) +
+            centerOffset;
+
+          el.style.transition = `transform ${timePerSpin}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+          el.style.transform = `translateY(${targetY}px)`;
+
+          config.currentIndex = nextIndex;
+        });
+
+        // Hiện Popup
+        setTimeout(() => {
+          showResultModal();
+          btn.disabled = false;
+        }, timePerSpin);
+      }
+
+      // --- XỬ LÝ POPUP (Yêu cầu 2: Bỏ ô trống) ---
+      function showResultModal() {
+        const modal = document.getElementById("resultModal");
+        const container = document.getElementById("resultContainer");
+        container.innerHTML = "";
+
+        reelsConfig.forEach((config) => {
+          const resultItem = config.data[config.currentIndex];
+
+          // Nếu là ô trống thì bỏ qua ngay, không vẽ gì cả
+          if (resultItem === "BLANK") return;
+
+          // Vẽ trái cây
+          const img = document.createElement("img");
+          img.src = resultItem;
+          img.className = "result-img";
+          img.style.width = "150px";
+          img.style.height = "150px";
+          img.style.margin = "0 10px";
+          container.appendChild(img);
+        });
+
+        modal.classList.add("active");
+      }
+
+      function closeModal() {
+        document.getElementById("resultModal").classList.remove("active");
+      }
+    </script>
+  </body>
+</html>
