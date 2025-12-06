@@ -12,7 +12,7 @@ body {
   align-items: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   overflow: hidden;
-  background-image: url("/BACKGOUND.png");
+  background-image: url("BACKGOUND.png");
   background-size: cover;
   background-position: center;
 }
