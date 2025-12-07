@@ -6,7 +6,6 @@
     <title>Minigame Quay Thưởng</title>
     <link rel="stylesheet" href="style.css" />
 
-    <!-- FAVICON -->
     <link
       rel="apple-touch-icon"
       sizes="180x180"
@@ -27,6 +26,8 @@
     <link rel="manifest" href="Favicon/site.webmanifest" />
   </head>
   <body>
+    <audio id="spinSound" src="spin.mp3" preload="auto"></audio>
+    <audio id="winSound" src="reward.mp3" preload="auto"></audio>
     <div class="main-wrapper">
       <div class="header-text">
         <h3>KHÓI – Câu lạc bộ Múa NTH</h3>
@@ -76,47 +77,47 @@
       // 1. Danh sách trái cây (10 loại)
       const fruitList = [
         "FRUITS/avocado.png",
-        "FRUITS/banana.png", // 1. Dâu
-        "FRUITS/blueberry.png", // 2. Táo xanh
-        "FRUITS/boba-tea.png", // 3. Kiwi
-        "FRUITS/carrot.png", // 4. Nho
-        "FRUITS/cheese-block.png", // 5. Cam
-        "FRUITS/cherries.png", // 6. Dưa hấu
-        "FRUITS/chilli-pepper.png", // 7. Dừa
-        "FRUITS/chocolate-bar.png", // 8. Chanh (Xanh)
-        "FRUITS/clover.png", // 9. Thơm (Dứa)
-        "FRUITS/coconut.png", // 10. Hamburger
-        "FRUITS/corn.png", // 11. Đậu phộng
-        "FRUITS/croissant.png", // 12. Pizza
-        "FRUITS/cupcake.png", // 13. Nấm đỏ
-        "FRUITS/donut.png", // 14. Táo đỏ
-        "FRUITS/eggplant.png", // 15. Cherry
-        "FRUITS/flowers.png", // 16. Đào
-        "FRUITS/french-fries.png", // 17. Blueberry
-        "FRUITS/grapes.png", // 18. Bắp
-        "FRUITS/greenapple.png", // 19. Ớt
-        "FRUITS/hamburger.png", // 20. Cà tím
-        "FRUITS/hot-dog.png", // 21. Bơ
-        "FRUITS/ice-cream.png", // 22. Cà rốt
-        "FRUITS/kiwi.png", // 23. Bỏng ngô
-        "FRUITS/lemon.png", // 24. Hot dog
-        "FRUITS/lolipop.png", // 25. Khoai tây chiên
-        "FRUITS/mushroom.png", // 26. Phô mai
-        "FRUITS/orange.png", // 27. Socola
-        "FRUITS/peach.png", // 28. Bánh kem dâu
-        "FRUITS/peanuts.png", // 29. Trà sữa
-        "FRUITS/pineapple.png", // 30. Kẹo mút
-        "FRUITS/pizza.png", // 31. Donut
-        "FRUITS/popcorn.png", // 32. Bó hoa
-        "FRUITS/redapple.png", // 33. Sandwich
-        "FRUITS/rose.png", // 34. Hoa hồng
-        "FRUITS/sandwich.png", // 35. Hoa hướng dương
-        "FRUITS/strawberry-cake.png", // 36. Cỏ 3 lá
-        "FRUITS/strawberry.png", // 37. Tulip
-        "FRUITS/sunflower.png", // 38. Hoa cúc
-        "FRUITS/tulip.png", // 39. Kem
-        "FRUITS/watermelon.png", // 40. Bánh sừng trâu
-        "FRUITS/hoacuc.png", // 41. Cupcake
+        "FRUITS/banana.png",
+        "FRUITS/blueberry.png",
+        "FRUITS/boba-tea.png",
+        "FRUITS/carrot.png",
+        "FRUITS/cheese-block.png",
+        "FRUITS/cherries.png",
+        "FRUITS/chilli-pepper.png",
+        "FRUITS/chocolate-bar.png",
+        "FRUITS/clover.png",
+        "FRUITS/coconut.png",
+        "FRUITS/corn.png",
+        "FRUITS/croissant.png",
+        "FRUITS/cupcake.png",
+        "FRUITS/donut.png",
+        "FRUITS/eggplant.png",
+        "FRUITS/flowers.png",
+        "FRUITS/french-fries.png",
+        "FRUITS/grapes.png",
+        "FRUITS/greenapple.png",
+        "FRUITS/hamburger.png",
+        "FRUITS/hot-dog.png",
+        "FRUITS/ice-cream.png",
+        "FRUITS/kiwi.png",
+        "FRUITS/lemon.png",
+        "FRUITS/lolipop.png",
+        "FRUITS/mushroom.png",
+        "FRUITS/orange.png",
+        "FRUITS/peach.png",
+        "FRUITS/peanuts.png",
+        "FRUITS/pineapple.png",
+        "FRUITS/pizza.png",
+        "FRUITS/popcorn.png",
+        "FRUITS/redapple.png",
+        "FRUITS/rose.png",
+        "FRUITS/sandwich.png",
+        "FRUITS/strawberry-cake.png",
+        "FRUITS/strawberry.png",
+        "FRUITS/sunflower.png",
+        "FRUITS/tulip.png",
+        "FRUITS/watermelon.png",
+        "FRUITS/hoacuc.png",
       ];
 
       // 2. Danh sách có ô trống (Index 0 là BLANK, Index 1-10 là trái cây)
@@ -156,7 +157,20 @@
       // --- HÀM QUAY (LOGIC MỚI: ĐỒNG BỘ TRÁI CÂY) ---
       function spin() {
         const btn = document.querySelector(".spin-btn");
+
+        // --- ÂM THANH: Lấy thẻ audio ---
+        const spinSound = document.getElementById("spinSound");
+        const winSound = document.getElementById("winSound");
+
         btn.disabled = true;
+
+        // --- ÂM THANH: Xử lý bắt đầu quay ---
+        winSound.pause(); // Dừng nhạc thắng nếu đang chạy
+        winSound.currentTime = 0;
+        spinSound.currentTime = 0;
+        spinSound
+          .play()
+          .catch((e) => console.log("Cần tương tác để phát nhạc")); // Bắt lỗi nếu trình duyệt chặn
 
         // BƯỚC 1: Chọn ra "Trái cây chủ đạo" của lượt quay này (Random từ 0-9)
         const targetFruitIndex = Math.floor(Math.random() * fruitList.length);
@@ -206,6 +220,10 @@
 
         // Hiện Popup
         setTimeout(() => {
+          // --- ÂM THANH: Xử lý khi dừng quay ---
+          spinSound.pause(); // Tắt tiếng quay
+          winSound.play(); // Bật tiếng thắng
+
           showResultModal();
           btn.disabled = false;
         }, timePerSpin);
@@ -237,7 +255,14 @@
       }
 
       function closeModal() {
-        document.getElementById("resultModal").classList.remove("active");
+        const modal = document.getElementById("resultModal");
+
+        // --- ÂM THANH: Tắt nhạc thắng khi đóng modal (Tuỳ chọn) ---
+        const winSound = document.getElementById("winSound");
+        winSound.pause();
+        winSound.currentTime = 0;
+
+        modal.classList.remove("active");
       }
     </script>
   </body>
