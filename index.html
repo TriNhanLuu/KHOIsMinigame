@@ -75,16 +75,48 @@
 
       // 1. Danh sách trái cây (10 loại)
       const fruitList = [
-        "https://cdn-icons-png.flaticon.com/512/415/415733.png", // 0: Táo
-        "https://cdn-icons-png.flaticon.com/512/135/135620.png", // 1: Cam
-        "https://cdn-icons-png.flaticon.com/512/1135/1135545.png", // 2: Nho
-        "https://cdn-icons-png.flaticon.com/512/2909/2909787.png", // 3: Dưa hấu
-        "https://cdn-icons-png.flaticon.com/512/1514/1514935.png", // 4: Chuối
-        "https://cdn-icons-png.flaticon.com/512/1135/1135579.png", // 5: Dâu
-        "https://cdn-icons-png.flaticon.com/512/2224/2224159.png", // 6: Cherry
-        "https://cdn-icons-png.flaticon.com/512/1412/1412511.png", // 7: Lê
-        "https://cdn-icons-png.flaticon.com/512/5726/5726583.png", // 8: Chanh
-        "https://cdn-icons-png.flaticon.com/512/765/765544.png", // 9: Đào
+        "FRUITS/avocado.png",
+        "FRUITS/banana.png", // 1. Dâu
+        "FRUITS/blueberry.png", // 2. Táo xanh
+        "FRUITS/boba-tea.png", // 3. Kiwi
+        "FRUITS/carrot.png", // 4. Nho
+        "FRUITS/cheese-block.png", // 5. Cam
+        "FRUITS/cherries.png", // 6. Dưa hấu
+        "FRUITS/chilli-pepper.png", // 7. Dừa
+        "FRUITS/chocolate-bar.png", // 8. Chanh (Xanh)
+        "FRUITS/clover.png", // 9. Thơm (Dứa)
+        "FRUITS/coconut.png", // 10. Hamburger
+        "FRUITS/corn.png", // 11. Đậu phộng
+        "FRUITS/croissant.png", // 12. Pizza
+        "FRUITS/cupcake.png", // 13. Nấm đỏ
+        "FRUITS/donut.png", // 14. Táo đỏ
+        "FRUITS/eggplant.png", // 15. Cherry
+        "FRUITS/flowers.png", // 16. Đào
+        "FRUITS/french-fries.png", // 17. Blueberry
+        "FRUITS/grapes.png", // 18. Bắp
+        "FRUITS/greenapple.png", // 19. Ớt
+        "FRUITS/hamburger.png", // 20. Cà tím
+        "FRUITS/hot-dog.png", // 21. Bơ
+        "FRUITS/ice-cream.png", // 22. Cà rốt
+        "FRUITS/kiwi.png", // 23. Bỏng ngô
+        "FRUITS/lemon.png", // 24. Hot dog
+        "FRUITS/lolipop.png", // 25. Khoai tây chiên
+        "FRUITS/mushroom.png", // 26. Phô mai
+        "FRUITS/orange.png", // 27. Socola
+        "FRUITS/peach.png", // 28. Bánh kem dâu
+        "FRUITS/peanuts.png", // 29. Trà sữa
+        "FRUITS/pineapple.png", // 30. Kẹo mút
+        "FRUITS/pizza.png", // 31. Donut
+        "FRUITS/popcorn.png", // 32. Bó hoa
+        "FRUITS/redapple.png", // 33. Sandwich
+        "FRUITS/rose.png", // 34. Hoa hồng
+        "FRUITS/sandwich.png", // 35. Hoa hướng dương
+        "FRUITS/strawberry-cake.png", // 36. Cỏ 3 lá
+        "FRUITS/strawberry.png", // 37. Tulip
+        "FRUITS/sunflower.png", // 38. Hoa cúc
+        "FRUITS/tulip.png", // 39. Kem
+        "FRUITS/watermelon.png", // 40. Bánh sừng trâu
+        "FRUITS/hoacuc.png", // 41. Cupcake
       ];
 
       // 2. Danh sách có ô trống (Index 0 là BLANK, Index 1-10 là trái cây)
@@ -102,7 +134,7 @@
       // --- HÀM TẠO GIAO DIỆN ---
       const generateStripHTML = (data) => {
         let html = "";
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 20; i++) {
           data.forEach((item) => {
             if (item === "BLANK") {
               html += `<div class="fruit-img" style="height: ${iconHeight}px;"></div>`;
@@ -161,7 +193,7 @@
           el.style.transform = `translateY(${resetY}px)`;
           void el.offsetWidth;
 
-          const loops = 40 + i * 5;
+          const loops = 10 + i * 3;
           const targetY =
             -(loops * totalItems * iconHeight + nextIndex * iconHeight) +
             centerOffset;
